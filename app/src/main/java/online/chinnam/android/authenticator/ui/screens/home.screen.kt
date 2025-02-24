@@ -2,7 +2,6 @@ package online.chinnam.android.authenticator.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import online.chinnam.android.authenticator.R
 import online.chinnam.android.authenticator.controllers.HomeController
 import online.chinnam.android.authenticator.iface.IController
+import online.chinnam.android.authenticator.ui.components.TotpTile
 
 
 @Composable
@@ -31,6 +32,9 @@ fun HomeScreen(controller: IController) {
 
     val pullToRefreshState = rememberPullToRefreshState()
 
+    LaunchedEffect(Unit) {
+        homeController.fetchTotp()
+    }
 
     PullToRefreshBox(
         modifier = Modifier.fillMaxSize(),
@@ -63,9 +67,8 @@ fun HomeScreen(controller: IController) {
                 }
             } else {
                 items(state.totpList.size) { index ->
-                    Box {
-                        Text(text = state.totpList[index].display)
-                    }
+                    val s = state.totpList[index]
+                    TotpTile(s, controller.getGenerator(s), controller.getTotpTimer(s.period))
                 }
             }
         }

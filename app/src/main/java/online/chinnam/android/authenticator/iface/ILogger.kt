@@ -18,4 +18,12 @@ interface ILogger {
         Log.e(this.javaClass.simpleName, e.message.toString(), e)
     }
 
+    /**
+     * Log error message
+     */
+    fun log(message: String, e: Throwable){
+        Log.e(this.javaClass.simpleName, message)
+        Log.e(this.javaClass.simpleName, e.message.toString(), e)
+    }
+
 }

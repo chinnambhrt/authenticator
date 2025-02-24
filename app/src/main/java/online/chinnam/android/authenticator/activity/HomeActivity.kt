@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import online.chinnam.android.authenticator.R
 import online.chinnam.android.authenticator.controllers.HomeController
+import online.chinnam.android.authenticator.ui.components.AuthenticatorAppBar
 import online.chinnam.android.authenticator.ui.screens.HomeScreen
 import online.chinnam.android.authenticator.ui.theme.AuthenticatorTheme
 
@@ -53,31 +54,7 @@ class HomeActivity : ComponentActivity() {
                             )
                         }
                     },
-                    topBar = {
-                        ListItem(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 38.dp),
-                            headlineContent = {
-                                Text(
-                                    getString(R.string.app_name),
-                                    fontSize = 22.sp
-                                )
-                            },
-                            leadingContent = {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceEvenly
-                                ) {
-                                    Image(
-                                        painterResource(R.drawable.app_icon),
-                                        contentDescription = "App Icon",
-                                        modifier = Modifier.size(32.dp)
-                                    )
-                                }
-                            }
-                        )
-                    },
+                    topBar = { AuthenticatorAppBar(showBack = false, showSettings = true) },
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
                     Column(
