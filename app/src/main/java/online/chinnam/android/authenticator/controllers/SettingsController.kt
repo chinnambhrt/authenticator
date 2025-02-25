@@ -18,12 +18,19 @@ import online.chinnam.android.authenticator.repository.SettingsRepository
 class SettingsController(private val application: Application) : AndroidViewModel(application),
     IController, ILogger {
 
-    private val state: MutableStateFlow<State> = MutableStateFlow(State())
 
     private val settingsRepository = SettingsRepository(application)
 
-    private val preferences: MutableStateFlow<AuthenticatorSettings> =
-        MutableStateFlow(AuthenticatorSettings())
+    private val state: MutableStateFlow<State> =
+        MutableStateFlow(State())
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            val settings = settingsRepository.loadSettings()
+            state.value = state.value.copy(preference = settings)
+        }
+    }
+
 
     fun updatePreferences(settings: AuthenticatorSettings) {
         log("Updating preferences: $settings")
@@ -31,7 +38,7 @@ class SettingsController(private val application: Application) : AndroidViewMode
         saveSettings(settings)
     }
 
-    private fun saveSettings(settings: AuthenticatorSettings){
+    private fun saveSettings(settings: AuthenticatorSettings) {
         log("Saving settings: $settings")
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.saveSettings(settings)
@@ -44,7 +51,7 @@ class SettingsController(private val application: Application) : AndroidViewMode
 
     fun proFeature(s: String, settings: AuthenticatorSettings) {
         log("Pro feature: $s")
-        if(!state.value.proEnabled) {
+        if (!state.value.proEnabled) {
             Toast.makeText(application, "Update to pro to access this feature", Toast.LENGTH_SHORT)
                 .show()
             return

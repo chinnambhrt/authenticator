@@ -19,7 +19,7 @@ data class AuthenticatorSettings(
     val allowEdits: Boolean = false,
 ) {
     fun json(): String {
-        return Json.encodeToString(this)
+        return Json.encodeToString(serializer(), this)
     }
 
     companion object {

@@ -1,6 +1,7 @@
 package online.chinnam.android.authenticator.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -23,7 +24,12 @@ import online.chinnam.android.authenticator.totp.TotpGenerator
 import online.chinnam.android.authenticator.totp.TotpTimer
 
 @Composable
-fun TotpTile(totpEntity: TotpEntity, generator: TotpGenerator, totpTimer: TotpTimer) {
+fun TotpTile(
+    totpEntity: TotpEntity,
+    generator: TotpGenerator,
+    totpTimer: TotpTimer,
+    onClick: () -> Unit
+) {
 
     val gState = generator.state.collectAsStateWithLifecycle().value
 
@@ -54,7 +60,8 @@ fun TotpTile(totpEntity: TotpEntity, generator: TotpGenerator, totpTimer: TotpTi
                     modifier = Modifier.size(28.dp)
                 )
             }
-        }
+        },
+        modifier = Modifier.clickable { onClick() }
     )
 
 

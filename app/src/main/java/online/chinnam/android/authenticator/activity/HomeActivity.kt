@@ -64,4 +64,17 @@ class HomeActivity : ComponentActivity() {
         }
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        controller.loadSettings()
+        controller.fetchTotp()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        controller.fetchTotp()
+        controller.loadSettings()
+    }
+
 }

@@ -18,6 +18,8 @@ import online.chinnam.android.authenticator.entity.TotpEntity
 import online.chinnam.android.authenticator.iface.IController
 import online.chinnam.android.authenticator.iface.ILogger
 import online.chinnam.android.authenticator.iface.IState
+import online.chinnam.android.authenticator.models.AuthenticatorSettings
+import online.chinnam.android.authenticator.repository.SettingsRepository
 import online.chinnam.android.authenticator.repository.TotpRepository
 import online.chinnam.android.authenticator.totp.TotpGenerator
 import online.chinnam.android.authenticator.totp.TotpTimer
@@ -30,12 +32,42 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
 
     private val repository = TotpRepository(application)
 
-    private val timerMap = mutableMapOf<Int,TotpTimer>()
+    private val authenticatorSettingsRepository = SettingsRepository(application)
+
+    private var settings = AuthenticatorSettings()
+
+    private val timerMap = mutableMapOf<Int, TotpTimer>()
 
     private val generatorMap = mutableMapOf<Int, TotpGenerator>()
 
     override fun getState(): StateFlow<State> {
         return state
+    }
+
+    init {
+        loadSettings()
+    }
+
+
+    /**
+     * Load the settings from the database
+     */
+    fun loadSettings() {
+        viewModelScope.launch(Dispatchers.IO) {
+            loadSettingsInternal()
+        }
+    }
+
+    private fun loadSettingsInternal() {
+        val settingsList = authenticatorSettingsRepository.get()
+        log("Settings list: ${settingsList.size}")
+        if (settingsList.isNotEmpty()) {
+            settings = AuthenticatorSettings.from(settingsList.first().content)
+        } else {
+            settings = AuthenticatorSettings()
+            log("Settings not found, creating new settings: ${settings.json()}")
+            authenticatorSettingsRepository.insert(settings)
+        }
     }
 
     /**
@@ -120,20 +152,38 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
         }
     }
 
-    fun getGenerator(t: TotpEntity): TotpGenerator{
-        if(t.id == null){
-            return TotpGenerator("INVALIDSECRET",30)
+    fun getGenerator(t: TotpEntity): TotpGenerator {
+        if (t.id == null) {
+            return TotpGenerator("INVALIDSECRET", 30)
         }
-        return generatorMap.getOrPut(t.id){
+        return generatorMap.getOrPut(t.id) {
             TotpGenerator.from(t)
         }
     }
 
-    fun onSettingsClicked(){
+    fun onSettingsClicked() {
         log("Settings clicked")
         val intent = Intent(application, SettingsActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         application.startActivity(intent)
+    }
+
+    /**
+     * Copy the totp to the clipboard
+     */
+    fun copyToClipboard(s: TotpEntity) {
+        if (!settings.tapToCopy) return
+
+        log("Copying to the clipboard")
+        val otp = getGenerator(s).state.value.otp
+
+        val clipboard = application.getSystemService(android.content.ClipboardManager::class.java)
+        
+        val clip = android.content.ClipData.newPlainText("otp", otp)
+
+        clipboard.setPrimaryClip(clip)
+
+        Toast.makeText(application, "Copied to clipboard", Toast.LENGTH_SHORT).show()
     }
 
 
