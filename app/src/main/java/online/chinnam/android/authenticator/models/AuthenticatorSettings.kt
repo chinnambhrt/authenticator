@@ -1,5 +1,13 @@
 package online.chinnam.android.authenticator.models
 
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
+
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable
+@JsonIgnoreUnknownKeys
 data class AuthenticatorSettings(
     val darkMode: Boolean = false,
     val unlockToOpen: Boolean = false,
@@ -9,4 +17,15 @@ data class AuthenticatorSettings(
     val exportData: Boolean = false,
     val importData: Boolean = false,
     val allowEdits: Boolean = false,
-)
+) {
+    fun json(): String {
+        return Json.encodeToString(this)
+    }
+
+    companion object {
+
+        fun from(json: String): AuthenticatorSettings {
+            return Json.decodeFromString<AuthenticatorSettings>(json)
+        }
+    }
+}

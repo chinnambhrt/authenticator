@@ -29,6 +29,8 @@ data class TotpEntity(
 
     val type: String = "TOTP",
 
+    val pinned: Boolean = false,
+
     val createdAt: Long = Instant.now().epochSecond,
 
     val updatedAt: Long = Instant.now().epochSecond

@@ -24,4 +24,7 @@ interface TotpEntityDAO {
 
     @Query("SELECT * FROM otp WHERE id = :id")
     fun getById(id: Int): TotpEntity
+
+    @Query("UPDATE otp SET pinned = :pinned WHERE id = :id")
+    fun updatePinned(id: Int, pinned: Boolean): Int
 }
