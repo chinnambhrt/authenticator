@@ -41,7 +41,7 @@ fun TotpTile(totpEntity: TotpEntity, generator: TotpGenerator, totpTimer: TotpTi
             Text(totpEntity.display, fontSize = 18.sp)
         },
         supportingContent = {
-            Text(gState.otp, fontSize = 32.sp, color = MaterialTheme.colorScheme.primary.copy(alpha = 0.87f))
+            Text(gState.otp, fontSize = 32.sp, color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.87f))
         },
         trailingContent = {
 

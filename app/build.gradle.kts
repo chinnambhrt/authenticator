@@ -65,6 +65,9 @@ dependencies {
     // material icons extended
     implementation(libs.material.icons.extended)
 
+    // preferences
+//    implementation(libs.androidx.preferences)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

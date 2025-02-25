@@ -1,6 +1,7 @@
 package online.chinnam.android.authenticator.controllers
 
 import android.app.Application
+import android.content.Intent
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import online.chinnam.android.authenticator.activity.SettingsActivity
 import online.chinnam.android.authenticator.entity.TotpEntity
 import online.chinnam.android.authenticator.iface.IController
 import online.chinnam.android.authenticator.iface.ILogger
@@ -125,6 +127,13 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
         return generatorMap.getOrPut(t.id){
             TotpGenerator.from(t)
         }
+    }
+
+    fun onSettingsClicked(){
+        log("Settings clicked")
+        val intent = Intent(application, SettingsActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        application.startActivity(intent)
     }
 
 
