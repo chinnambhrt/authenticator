@@ -12,4 +12,4 @@ val Pink40 = Color(0xFF7D5260)
 
 val AuthenticatorPrimary = Color(0xFF263238)
 val AuthenticatorTertiary = Color(0xFF519FC3)
-val AuthenticatorSecondary = Color(0xFFCCC2DC)
+val AuthenticatorSecondary = Color(0xFF4F8394)

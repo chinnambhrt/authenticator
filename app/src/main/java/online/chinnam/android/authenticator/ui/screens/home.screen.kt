@@ -49,9 +49,9 @@ fun HomeScreen(controller: IController) {
             if (state.totpList.isEmpty()) {
                 item {
                     Column(
-                        modifier = Modifier.fillParentMaxWidth(),
+                        modifier = Modifier,
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        verticalArrangement = Arrangement.Top
                     ) {
                         Image(
                             painter = painterResource(R.drawable.empty_illustration),
