@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -36,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import online.chinnam.android.authenticator.entity.TotpEntity
 import online.chinnam.android.authenticator.totp.TotpGenerator
 import online.chinnam.android.authenticator.totp.TotpTimer
+import online.chinnam.android.authenticator.utils.ellipsis
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -44,7 +46,8 @@ fun TotpTile(
     generator: TotpGenerator,
     totpTimer: TotpTimer,
     showMenu: Boolean = false,
-    onClick: (Boolean) -> Unit
+    onClick: (Boolean) -> Unit,
+    onMenuSelect: (String) -> Unit
 ) {
 
     val gState = generator.state.collectAsStateWithLifecycle().value
@@ -68,7 +71,20 @@ fun TotpTile(
 
         ListItem(
             headlineContent = {
-                Text(totpEntity.display, fontSize = 18.sp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    if (totpEntity.pinned) {
+                        Icon(
+                            Icons.Filled.PushPin,
+                            null,
+                            modifier = Modifier.size(18.dp).padding(end = 5.dp),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                    Text(totpEntity.display.ellipsis(30), fontSize = 18.sp)
+                }
             },
             supportingContent = {
                 Text(
@@ -89,6 +105,7 @@ fun TotpTile(
                     )
                 }
             },
+
             modifier = Modifier.combinedClickable(
                 enabled = true,
                 onClick = {
@@ -107,9 +124,21 @@ fun TotpTile(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
-                TotpTileOption(title = "Pin", icon = Icons.Filled.PushPin) { }
-                TotpTileOption(title = "Copy", icon = Icons.Filled.ContentCopy) { }
-                TotpTileOption(title = "Delete", icon = Icons.Filled.Delete) { }
+                if (totpEntity.pinned) {
+                    TotpTileOption(title = "Unpin", icon = Icons.Filled.PushPin) {
+                        onMenuSelect("unpin")
+                    }
+                } else {
+                    TotpTileOption(title = "Pin", icon = Icons.Outlined.PushPin) {
+                        onMenuSelect("pin")
+                    }
+                }
+                TotpTileOption(title = "Copy", icon = Icons.Filled.ContentCopy) {
+                    onMenuSelect("copy")
+                }
+                TotpTileOption(title = "Delete", icon = Icons.Filled.Delete) {
+                    onMenuSelect("delete")
+                }
             }
 
         }

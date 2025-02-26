@@ -79,7 +79,8 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
 
         viewModelScope.launch(Dispatchers.IO) {
             val list = repository.all()
-            _state.value = _state.value.copy(totpList = list, isLoading = false)
+            val sortedList = list.sortedByDescending { it.pinned }
+            _state.value = _state.value.copy(totpList = sortedList, isLoading = false)
             log("Fetched ${list.size} totp from the database")
         }
     }
@@ -111,7 +112,6 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
 
         scanner.startScan().addOnSuccessListener {
             val rawString = it.rawValue
-            log("Barcode value: $rawString")
             if (rawString != null) {
                 log("Barcode value: $rawString")
                 val entity = TotpEntity.fromUrl(rawString)
@@ -146,12 +146,18 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
     }
 
 
+    /**
+     * Get the totp timer for the period
+     */
     fun getTotpTimer(period: Int): TotpTimer {
         return timerMap.getOrPut(period) {
             TotpTimer(period)
         }
     }
 
+    /**
+     * Get the totp generator for the totp entity
+     */
     fun getGenerator(t: TotpEntity): TotpGenerator {
         if (t.id == null) {
             return TotpGenerator("INVALIDSECRET", 30)
@@ -161,6 +167,9 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
         }
     }
 
+    /**
+     * Handle the click event when the settings icon is clicked
+     */
     fun onSettingsClicked() {
         log("Settings clicked")
         val intent = Intent(application, SettingsActivity::class.java)
@@ -171,8 +180,9 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
     /**
      * Copy the totp to the clipboard
      */
-    fun copyToClipboard(s: TotpEntity) {
-        if (!settings.tapToCopy) return
+    fun copyToClipboard(s: TotpEntity, force: Boolean = false) {
+
+        if (settings.tapToCopy.not() && force.not()) return
 
         log("Copying to the clipboard")
         val otp = getGenerator(s).state.value.otp
@@ -192,6 +202,56 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
     fun showMenu(s: TotpEntity?) {
         log("Show menu for ${s?.display}")
         _state.value = _state.value.copy(showMenuUid = s?.id ?: -1)
+    }
+
+    /**
+     * Handle the menu selection for the totp
+     */
+    fun onMenuSelect(s: TotpEntity, it: String) {
+        log("Menu selected: $it")
+        when (it) {
+            "delete" -> {
+                deleteTotp(s)
+            }
+
+            "copy" -> {
+                copyToClipboard(s, true)
+            }
+
+            "pin" -> {
+                pinTotp(s, true)
+            }
+
+            "unpin" -> {
+                pinTotp(s, false)
+            }
+
+            else -> {
+                log("Unknown menu item: $it")
+            }
+        }
+        showMenu(null)
+    }
+
+    /**
+     * Pin or unpin the totp
+     */
+    private fun pinTotp(s: TotpEntity, b: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.update(s.copy(pinned = b))
+            fetchTotp()
+        }
+    }
+
+
+    /**
+     * Delete the totp from the database
+     */
+    private fun deleteTotp(s: TotpEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.delete(s)
+            fetchTotp()
+        }
     }
 
 
