@@ -8,14 +8,14 @@ plugins {
 
 android {
     namespace = "online.chinnam.android.authenticator"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "online.chinnam.android.authenticator"
-        minSdk = 28
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = libs.versions.appVersionCode.get().toInt()
+        versionName = libs.versions.appVersionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -23,18 +23,29 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            manifestPlaceholders["app_name"] = "Authenticator"
+            buildConfigField("Boolean", "DEBUG", "false")
+            buildConfigField("String", "APP_NAME", "\"Authenticator\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isDebuggable = true
+            applicationIdSuffix = ".debug"
+            manifestPlaceholders["app_name"] = "Authenticator Debug"
+            buildConfigField("Boolean", "DEBUG", "true")
+            buildConfigField("String", "APP_NAME", "\"Authenticator Debug\"")
+
+        }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true

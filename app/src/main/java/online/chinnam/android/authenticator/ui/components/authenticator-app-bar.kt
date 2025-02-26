@@ -19,11 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import online.chinnam.android.authenticator.BuildConfig
 import online.chinnam.android.authenticator.R
 
 @Composable
 fun AuthenticatorAppBar(
-    title: String = "Authenticator",
+    title: String = BuildConfig.APP_NAME,
     showAppIcon: Boolean = true,
     showBack: Boolean = false,
     onBackClick: () -> Unit = {},
