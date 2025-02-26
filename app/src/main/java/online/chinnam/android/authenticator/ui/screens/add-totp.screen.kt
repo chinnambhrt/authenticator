@@ -40,7 +40,7 @@ fun AddTotpScreen(iController: IController) {
 
             Column(
                 modifier = Modifier,
-                horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Top
             ) {
 
