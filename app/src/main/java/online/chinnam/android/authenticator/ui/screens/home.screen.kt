@@ -68,8 +68,14 @@ fun HomeScreen(controller: IController) {
             } else {
                 items(state.totpList.size) { index ->
                     val s = state.totpList[index]
-                    TotpTile(s, controller.getGenerator(s), controller.getTotpTimer(s.period)){
-                        controller.copyToClipboard(s)
+                    TotpTile(s, controller.getGenerator(s), controller.getTotpTimer(s.period), showMenu = (state.showMenuUid == s.id)) {
+                        if(it){
+                            controller.showMenu(s)
+                        }
+                        else {
+                            controller.showMenu(null)
+                            controller.copyToClipboard(s)
+                        }
                     }
                 }
             }

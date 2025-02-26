@@ -75,7 +75,7 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
      */
     fun fetchTotp() {
 
-        _state.value = _state.value.copy(isLoading = true)
+        _state.value = _state.value.copy(isLoading = true, showMenuUid = -1)
 
         viewModelScope.launch(Dispatchers.IO) {
             val list = repository.all()
@@ -178,12 +178,20 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
         val otp = getGenerator(s).state.value.otp
 
         val clipboard = application.getSystemService(android.content.ClipboardManager::class.java)
-        
+
         val clip = android.content.ClipData.newPlainText("otp", otp)
 
         clipboard.setPrimaryClip(clip)
 
         Toast.makeText(application, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * Show the menu when a totp is long clicked
+     */
+    fun showMenu(s: TotpEntity?) {
+        log("Show menu for ${s?.display}")
+        _state.value = _state.value.copy(showMenuUid = s?.id ?: -1)
     }
 
 
@@ -193,6 +201,7 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
     data class State(
         val selectedTotp: TotpEntity? = null,
         val isLoading: Boolean = false,
-        val totpList: List<TotpEntity> = emptyList()
+        val totpList: List<TotpEntity> = emptyList(),
+        val showMenuUid: Int = -1
     ) : IState
 }
