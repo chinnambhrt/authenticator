@@ -10,3 +10,12 @@ fun String.ellipsis(length: Int = 25): String {
         this
     }
 }
+
+fun getAlgorithmName(algorithm: String): String {
+    return when (algorithm.uppercase()) {
+        "SHA1" -> "HmacSHA1"
+        "SHA256" -> "HmacSHA256"
+        "SHA512" -> "HmacSHA512"
+        else -> algorithm
+    }
+}
