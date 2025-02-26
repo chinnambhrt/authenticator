@@ -8,7 +8,7 @@ import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 @JsonIgnoreUnknownKeys
-data class AuthenticatorSettings(
+data class AuthenticatorApplicationConfig(
     val darkMode: Boolean = false,
     val unlockToOpen: Boolean = false,
     val autoLock: Boolean = false,
@@ -24,8 +24,8 @@ data class AuthenticatorSettings(
 
     companion object {
 
-        fun from(json: String): AuthenticatorSettings {
-            return Json.decodeFromString<AuthenticatorSettings>(json)
+        fun from(json: String): AuthenticatorApplicationConfig {
+            return Json.decodeFromString<AuthenticatorApplicationConfig>(json)
         }
     }
 }

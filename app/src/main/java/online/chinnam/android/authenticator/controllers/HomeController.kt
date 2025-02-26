@@ -18,7 +18,7 @@ import online.chinnam.android.authenticator.entity.TotpEntity
 import online.chinnam.android.authenticator.iface.IController
 import online.chinnam.android.authenticator.iface.ILogger
 import online.chinnam.android.authenticator.iface.IState
-import online.chinnam.android.authenticator.models.AuthenticatorSettings
+import online.chinnam.android.authenticator.models.AuthenticatorApplicationConfig
 import online.chinnam.android.authenticator.repository.SettingsRepository
 import online.chinnam.android.authenticator.repository.TotpRepository
 import online.chinnam.android.authenticator.totp.TotpGenerator
@@ -34,7 +34,7 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
 
     private val authenticatorSettingsRepository = SettingsRepository(application)
 
-    private var settings = AuthenticatorSettings()
+    private var settings = AuthenticatorApplicationConfig()
 
     private val timerMap = mutableMapOf<Int, TotpTimer>()
 
@@ -62,9 +62,9 @@ class HomeController(private val application: Application) : AndroidViewModel(ap
         val settingsList = authenticatorSettingsRepository.get()
         log("Settings list: ${settingsList.size}")
         if (settingsList.isNotEmpty()) {
-            settings = AuthenticatorSettings.from(settingsList.first().content)
+            settings = AuthenticatorApplicationConfig.from(settingsList.first().content)
         } else {
-            settings = AuthenticatorSettings()
+            settings = AuthenticatorApplicationConfig()
             log("Settings not found, creating new settings: ${settings.json()}")
             authenticatorSettingsRepository.insert(settings)
         }

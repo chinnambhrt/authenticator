@@ -36,7 +36,7 @@ fun SettingsScreen(c: IController) {
                     title = "Add an account",
                     subtitle = "Use this option if you can't scan the QR code.",
                     icon = Icons.Filled.PersonAdd,
-                    onClick = { },
+                    onClick = { controller.addAccount() },
                 )
                 SwitchSettingTile(
                     title = "Tap to copy",
