@@ -14,7 +14,6 @@
 .cxx
 local.properties
 
-gradle/
 .gradle/
 app/build/
 app/release/
